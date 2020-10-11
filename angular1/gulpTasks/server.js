@@ -2,17 +2,19 @@ const gulp = require('gulp')
 const watch = require('gulp-watch')
 const webserver = require('gulp-webserver')
 
-gulp.task('watch', () => {
-    watch('app/**/*.html', () => gulp.start('app.html'))
-    watch('app/**/*.css', () => gulp.start('app.css'))
-    watch('app/**/*.js', () => gulp.start('app.js'))
-    watch('app/**/*.8', () => gulp.start('app.assets'))
-})
+const monitorarMudancas = (cb) => {
+    watch('app/**/*.html', () => gulp.start('appHTML'))
+    watch('app/**/*.css', () => gulp.start('appCSS'))
+    watch('app/**/*js', () => gulp.start('appJS'))
+    watch('assets/**/*.*', () => gulp.start('appIMG'))
+}
 
-gulp.task('server', ['watch'], () => {
-    gulp.src('public').pipe(webserver({
+const servidor = (cb) => {
+    return gulp.src('public').pipe(webserver({
         livereload: true,
         port: 3000,
         open: true
     }))
-})
+}
+
+module.exports = { monitorarMudancas, servidor }

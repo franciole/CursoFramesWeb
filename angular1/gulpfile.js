@@ -1,15 +1,15 @@
+const { series, parallel } = require('gulp')
 const gulp = require('gulp')
 const util = require('gulp-util')
-const sequence = require('run-sequence')
 
-require('./gulpTasks/app')
-require('./gulpTasks/deps')
-require('./gulpTasks/server')
+const { appHtml, appCss, appJs, appImgs } = require('./gulpTasks/app')
+const { depsCss, depsFonts } = require('./gulpTasks/deps')
+const { servidor, monitorarMudancas } = require('./gulpTasks/server')
 
-gulp.task('default', () => {
-    if (util.env.production) {
-        sequence('deps', 'app')
-    } else {
-        sequence('deps', 'app', 'server')
-    }
-})
+const production = series(parallel(series(appHtml, appCss, appJs, appImgs), series(depsCss, depsFonts)))
+
+const development = series(parallel(series(appHtml, appCss, appJs, appImgs), series(depsCss, depsFonts)),series(servidor, monitorarMudancas))
+
+const mode = util.env.production ? production : development
+
+exports.default = mode
